@@ -1,8 +1,8 @@
 Practice project to learn about React-Native Animated and Gesture Handlers  </br>
-
+    
     Project consist: 
+</br> 
         - a list of users data that came from an external public api
         - cards with image, name and etc about user
-    
-
+</br>
     The main ideia behind the project is try combine Animated with Gesture Handlers to move only one single card per time
