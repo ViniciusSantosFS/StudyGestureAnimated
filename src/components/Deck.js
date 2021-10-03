@@ -23,9 +23,9 @@ export default function Deck({ data, renderCard }) {
 
       onPanResponderRelease: (event, gestureFinalState) => {
         if (gestureFinalState.dx > SWIPE_SUCCESS) {
-          forceSwipeRight();
+          forceSwipe("RIGHT");
         } else if (gestureFinalState.dx < -SWIPE_SUCCESS) {
-          forceSwipeLeft();
+          forceSwipe("left");
         } else {
           resetCardPosition();
         }
@@ -40,17 +40,15 @@ export default function Deck({ data, renderCard }) {
     }).start();
   };
 
-  const forceSwipeRight = () => {
-    Animated.timing(animationCard, {
-      toValue: { x: CURRENT_SCREEN_WIDTH, y: 0 },
-      duration: SWIPE_OUT_DURATION,
-      useNativeDriver: false,
-    }).start();
-  };
+  const forceSwipe = (direction = null) => {
+    if (direction === null) return;
+    const x =
+      direction.toLowerCase() === "right"
+        ? CURRENT_SCREEN_WIDTH
+        : -CURRENT_SCREEN_WIDTH;
 
-  const forceSwipeLeft = () => {
     Animated.timing(animationCard, {
-      toValue: { x: -CURRENT_SCREEN_WIDTH, y: 0 },
+      toValue: { x, y: 0 },
       duration: SWIPE_OUT_DURATION,
       useNativeDriver: false,
     }).start();
