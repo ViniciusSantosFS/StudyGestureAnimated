@@ -3,6 +3,7 @@ import { View, PanResponder, Animated, Dimensions } from "react-native";
 
 const CURRENT_SCREEN_WIDTH = Dimensions.get("window").width;
 const SWIPE_SUCCESS = 0.25 * CURRENT_SCREEN_WIDTH;
+const SWIPE_OUT_DURATION = 250;
 
 export default function Deck({ data, renderCard }) {
   const animationCard = useRef(new Animated.ValueXY()).current;
@@ -22,9 +23,9 @@ export default function Deck({ data, renderCard }) {
 
       onPanResponderRelease: (event, gestureFinalState) => {
         if (gestureFinalState.dx > SWIPE_SUCCESS) {
-          console.log("SWIPED RIGHT");
+          forceSwipeRight();
         } else if (gestureFinalState.dx < -SWIPE_SUCCESS) {
-          console.log("SWIPED LEFT");
+          forceSwipeLeft();
         } else {
           resetCardPosition();
         }
@@ -35,6 +36,22 @@ export default function Deck({ data, renderCard }) {
   const resetCardPosition = () => {
     Animated.spring(animationCard, {
       toValue: { x: 0, y: 0 },
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const forceSwipeRight = () => {
+    Animated.timing(animationCard, {
+      toValue: { x: CURRENT_SCREEN_WIDTH, y: 0 },
+      duration: SWIPE_OUT_DURATION,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const forceSwipeLeft = () => {
+    Animated.timing(animationCard, {
+      toValue: { x: -CURRENT_SCREEN_WIDTH, y: 0 },
+      duration: SWIPE_OUT_DURATION,
       useNativeDriver: false,
     }).start();
   };
