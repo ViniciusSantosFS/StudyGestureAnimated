@@ -1,5 +1,8 @@
 import React, { useRef } from "react";
-import { View, PanResponder, Animated } from "react-native";
+import { View, PanResponder, Animated, Dimensions } from "react-native";
+
+const CURRENT_SCREEN_WIDTH = Dimensions.get("window").width;
+const SWIPE_SUCCESS = 0.25 * CURRENT_SCREEN_WIDTH;
 
 export default function Deck({ data, renderCard }) {
   const animationCard = useRef(new Animated.ValueXY()).current;
@@ -17,13 +20,28 @@ export default function Deck({ data, renderCard }) {
         });
       }, // Verifica os gestos do usúario com a aplicação
 
-      onPanResponderRelease: (event, gestureFinalState) => {}, // usúario finalizou a interação com a aplicação
+      onPanResponderRelease: (event, gestureFinalState) => {
+        if (gestureFinalState.dx > SWIPE_SUCCESS) {
+          console.log("SWIPED RIGHT");
+        } else if (gestureFinalState.dx < -SWIPE_SUCCESS) {
+          console.log("SWIPED LEFT");
+        } else {
+          resetCardPosition();
+        }
+      }, // usúario finalizou a interação com a aplicação
     })
   ).current;
 
+  const resetCardPosition = () => {
+    Animated.spring(animationCard, {
+      toValue: { x: 0, y: 0 },
+      useNativeDriver: false,
+    }).start();
+  };
+
   const getStyles = () => {
     const rotate = animationCard.x.interpolate({
-      inputRange: [-500, 0, 500],
+      inputRange: [-CURRENT_SCREEN_WIDTH * 1.5, 0, CURRENT_SCREEN_WIDTH * 1.5],
       outputRange: ["-120deg", "0deg", "120deg"],
     });
     return {
