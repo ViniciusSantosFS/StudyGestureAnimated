@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { PanResponder, Animated } from "react-native";
+import { View, PanResponder, Animated } from "react-native";
 
 export default function Deck({ data, renderCard }) {
   const animationCard = useRef(new Animated.ValueXY()).current;
@@ -21,18 +21,33 @@ export default function Deck({ data, renderCard }) {
     })
   ).current;
 
+  const getStyles = () => {
+    const rotate = animationCard.x.interpolate({
+      inputRange: [-500, 0, 500],
+      outputRange: ["-120deg", "0deg", "120deg"],
+    });
+    return {
+      ...animationCard.getLayout(),
+      transform: [{ rotate }],
+    };
+  };
+
   const renderCards = () => {
-    return data.map((item) => {
+    return data.map((item, index) => {
+      if (index === 0) {
+        return (
+          <Animated.View
+            key={item.login.uuid}
+            {...panResponder.panHandlers}
+            style={getStyles()}
+          >
+            {renderCard(item)}
+          </Animated.View>
+        );
+      }
       return renderCard(item);
     });
   };
 
-  return (
-    <Animated.View
-      {...panResponder.panHandlers}
-      style={animationCard.getLayout()}
-    >
-      {renderCards()}
-    </Animated.View>
-  );
+  return <View>{renderCards()}</View>;
 }
