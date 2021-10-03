@@ -51,7 +51,11 @@ export default function Deck({ data, renderCard }) {
       toValue: { x, y: 0 },
       duration: SWIPE_OUT_DURATION,
       useNativeDriver: false,
-    }).start();
+    }).start(() => onSwiped(direction));
+  };
+
+  const onSwiped = (direction) => {
+    direction === "right" ? onSwipedRight : onSwipedLeft; // Futuras funções
   };
 
   const getStyles = () => {
