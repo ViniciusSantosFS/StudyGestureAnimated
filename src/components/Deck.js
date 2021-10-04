@@ -113,9 +113,17 @@ export default function Deck({
           );
         }
         return (
-          <View key={item.login.uuid} style={styles.cardStyle}>
+          <Animated.View
+            key={item.login.uuid}
+            style={[
+              styles.cardStyle,
+              {
+                marginTop: 10 * (index - currentCard),
+              },
+            ]}
+          >
             {renderCard(item)}
-          </View>
+          </Animated.View>
         );
       })
       .reverse();
