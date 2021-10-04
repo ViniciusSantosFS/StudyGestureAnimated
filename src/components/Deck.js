@@ -10,10 +10,12 @@ const defaultVoid = () => {};
 export default function Deck({
   data,
   renderCard,
+  renderNoMoreCard,
+  currentCard,
+  setCurrentCard,
   onSwipedRight = defaultVoid,
   onSwipedLeft = defaultVoid,
 }) {
-  const [currentCard, setCurrentCard] = useState(0);
   const animationCard = useRef(new Animated.ValueXY()).current;
 
   const panResponder = useMemo(
@@ -88,6 +90,8 @@ export default function Deck({
   };
 
   const renderCards = () => {
+    if (currentCard >= data.length) return renderNoMoreCard();
+
     return data.map((item, index) => {
       if (index < currentCard) return null;
       if (index === currentCard) {
