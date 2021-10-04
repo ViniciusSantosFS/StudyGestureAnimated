@@ -1,5 +1,11 @@
 import React, { useRef, useMemo, useState } from "react";
-import { View, PanResponder, Animated, Dimensions } from "react-native";
+import {
+  View,
+  PanResponder,
+  Animated,
+  Dimensions,
+  StyleSheet,
+} from "react-native";
 
 const CURRENT_SCREEN_WIDTH = Dimensions.get("window").width;
 const SWIPE_SUCCESS = 0.25 * CURRENT_SCREEN_WIDTH;
@@ -92,22 +98,35 @@ export default function Deck({
   const renderCards = () => {
     if (currentCard >= data.length) return renderNoMoreCard();
 
-    return data.map((item, index) => {
-      if (index < currentCard) return null;
-      if (index === currentCard) {
+    return data
+      .map((item, index) => {
+        if (index < currentCard) return null;
+        if (index === currentCard) {
+          return (
+            <Animated.View
+              key={item.login.uuid}
+              {...panResponder.panHandlers}
+              style={[getStyles(), styles.cardStyle]}
+            >
+              {renderCard(item)}
+            </Animated.View>
+          );
+        }
         return (
-          <Animated.View
-            key={item.login.uuid}
-            {...panResponder.panHandlers}
-            style={getStyles()}
-          >
+          <View key={item.login.uuid} style={styles.cardStyle}>
             {renderCard(item)}
-          </Animated.View>
+          </View>
         );
-      }
-      return renderCard(item);
-    });
+      })
+      .reverse();
   };
 
   return <View>{renderCards()}</View>;
 }
+
+const styles = StyleSheet.create({
+  cardStyle: {
+    position: "absolute",
+    width: CURRENT_SCREEN_WIDTH,
+  },
+});
