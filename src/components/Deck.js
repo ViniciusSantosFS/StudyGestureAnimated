@@ -1,9 +1,11 @@
-import React, { useRef, useMemo, useState } from "react";
+import React, { useRef, useMemo } from "react";
 import {
   View,
   PanResponder,
   Animated,
   Dimensions,
+  LayoutAnimation,
+  UIManager,
   StyleSheet,
 } from "react-native";
 
@@ -24,32 +26,35 @@ export default function Deck({
 }) {
   const animationCard = useRef(new Animated.ValueXY()).current;
 
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onPanResponderStart: () => true, // verifica se esse pan responder é responsavél pelo gesto
+  const panResponder = useMemo(() => {
+    UIManager.setLayoutAnimationEnabledExperimental &&
+      UIManager.setLayoutAnimationEnabledExperimental(true);
 
-        onMoveShouldSetPanResponder: () => true,
+    LayoutAnimation.spring();
 
-        onPanResponderMove: (event, gestureState) => {
-          animationCard.setValue({
-            x: gestureState.dx,
-            y: gestureState.dy,
-          });
-        }, // Verifica os gestos do usúario com a aplicação
+    return PanResponder.create({
+      onPanResponderStart: () => true, // verifica se esse pan responder é responsavél pelo gesto
 
-        onPanResponderRelease: (event, gestureFinalState) => {
-          if (gestureFinalState.dx > SWIPE_SUCCESS) {
-            forceSwipe("RIGHT");
-          } else if (gestureFinalState.dx < -SWIPE_SUCCESS) {
-            forceSwipe("left");
-          } else {
-            resetCardPosition();
-          }
-        }, // usúario finalizou a interação com a aplicação
-      }),
-    [currentCard]
-  );
+      onMoveShouldSetPanResponder: () => true,
+
+      onPanResponderMove: (event, gestureState) => {
+        animationCard.setValue({
+          x: gestureState.dx,
+          y: gestureState.dy,
+        });
+      }, // Verifica os gestos do usúario com a aplicação
+
+      onPanResponderRelease: (event, gestureFinalState) => {
+        if (gestureFinalState.dx > SWIPE_SUCCESS) {
+          forceSwipe("RIGHT");
+        } else if (gestureFinalState.dx < -SWIPE_SUCCESS) {
+          forceSwipe("left");
+        } else {
+          resetCardPosition();
+        }
+      }, // usúario finalizou a interação com a aplicação
+    });
+  }, [currentCard]);
 
   const resetCardPosition = () => {
     Animated.spring(animationCard, {

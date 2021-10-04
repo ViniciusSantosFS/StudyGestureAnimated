@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, StatusBar } from "react-native";
 
 import { Card, Button } from "react-native-elements";
 
-import { DATA } from "./mocks";
+import { DATA } from "./services";
 
 import Deck from "./components/Deck";
 
